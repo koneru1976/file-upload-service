@@ -1,4 +1,5 @@
 plugins {
+	id 'idea'
 	id 'org.springframework.boot' version '2.2.5.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
@@ -19,8 +20,50 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
 }
 
 test {
 	useJUnitPlatform()
 }
+
+sourceSets {
+	itest {
+		java {
+			compileClasspath += test.compileClasspath
+			runtimeClasspath += test.runtimeClasspath
+			srcDir 'src/itest/java'
+		}
+		resources {
+			srcDir 'src/itest/resources'
+		}
+	}
+}
+
+
+
+configurations {
+	itesCompile.extendsFrom testCompile
+	itestRuntime.extendsFrom testRuntime
+}
+
+idea {
+	module {
+		testSourceDirs += file('src/itest/java')
+		testResourceDirs += file('src/itest/resources')
+
+		scopes.TEST.plus += [configurations.itestCompile]
+	}
+}
+
+task integrationTest(type: Test) {
+	testClassesDirs = sourceSets.itest.output.classesDirs
+	classpath = sourceSets.itest.runtimeClasspath
+}
+
+integrationTest {
+	useJUnitPlatform()
+}
+
+check.dependsOn integrationTest
+integrationTest.mustRunAfter test
