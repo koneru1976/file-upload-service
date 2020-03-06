@@ -1,19 +1,18 @@
 package com.rkoneru.fileuploaderservice.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
-import java.nio.file.Path;
-
 import com.rkoneru.fileuploaderservice.MultipartFileMother;
 import com.rkoneru.fileuploaderservice.exception.FileUploadException;
-import com.rkoneru.fileuploaderservice.vo.FileUploadResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import java.io.IOException;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 class FileServiceTest {
 
@@ -21,20 +20,22 @@ class FileServiceTest {
     public Path temporaryFolder;
     private FileService fileService;
 
+    private SimpMessagingTemplate mockSimpMessagingTemplate = mock(SimpMessagingTemplate.class);
+
     @BeforeEach
     void setUp() {
-        fileService = new FileService(temporaryFolder);
+        fileService = new FileService(temporaryFolder, mockSimpMessagingTemplate);
     }
 
     @Test
-    void successfulFileSaveShouldReturnTrue() throws IOException {
-        FileUploadResult fileUploadResult = fileService.saveMultipartFile(MultipartFileMother.create());
+    void successfulFileUploadShouldReturnTrue() throws IOException {
+        boolean isFileUploadSuccess = fileService.uploadFile(MultipartFileMother.create());
 
-        assertEquals("test", fileUploadResult.getFileName());
+        assertTrue(isFileUploadSuccess);
     }
 
     @Test
-    void unsuccessfulFileSaveShouldReturnFalse() {
-        Assertions.assertThrows(FileUploadException.class, () -> fileService.saveMultipartFile(null));
+    void unsuccessfulFileUploadShouldReturnFalse() {
+        Assertions.assertThrows(FileUploadException.class, () -> fileService.uploadFile(null));
     }
 }
