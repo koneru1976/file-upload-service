@@ -1,19 +1,18 @@
 package com.rkoneru.fileuploaderservice.service;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import com.rkoneru.fileuploaderservice.domain.FileUploadMessage;
 import com.rkoneru.fileuploaderservice.exception.FileUploadException;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 public class FileService {
@@ -52,7 +51,7 @@ public class FileService {
     private double fileSize(String fileName) {
         try {
             File file = new File(getFileStorageLocation() + File.separator + fileName);
-            return FileUtils.sizeOf(file);
+            return file.length();
         } catch (Exception ex) {
             logger.error("Error calculation file size", ex);
         }
