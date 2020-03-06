@@ -11,8 +11,8 @@ public class MultipartFileMother {
     }
 
     public static MultipartFile create() throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource("test.pdf");
-        MockMultipartFile multipartFile = new MockMultipartFile("test", classPathResource.getInputStream());
+        ClassPathResource classPathResource = new ClassPathResource("rkoneru.doc");
+        MockMultipartFile multipartFile = new MockMultipartFile(classPathResource.getFilename(), classPathResource.getInputStream());
         return multipartFile;
     }
 }

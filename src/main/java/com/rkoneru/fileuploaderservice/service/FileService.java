@@ -1,11 +1,13 @@
 package com.rkoneru.fileuploaderservice.service;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.rkoneru.fileuploaderservice.domain.FileUploadMessage;
 import com.rkoneru.fileuploaderservice.exception.FileUploadException;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +44,20 @@ public class FileService {
     }
 
     private void sendFileUploadMessageToWebSocket(MultipartFile multipartFile) {
-        FileUploadMessage fileUploadMessage = new FileUploadMessage(multipartFile.getName(), 5.0);
+        double fileSize = fileSize(multipartFile.getName());
+        FileUploadMessage fileUploadMessage = new FileUploadMessage(multipartFile.getName(), fileSize);
         simpMessagingTemplate.convertAndSend(FILE_UPLOADS_TOPIC, fileUploadMessage);
+    }
+
+    private double fileSize(String fileName) {
+        try {
+            File file = new File(getFileStorageLocation() + File.separator + fileName);
+            return FileUtils.sizeOf(file);
+        } catch (Exception ex) {
+            logger.error("Error calculation file size", ex);
+        }
+        return 0;
+
     }
 
     private String getFileStorageLocation() {

@@ -3,18 +3,18 @@ package com.rkoneru.fileuploaderservice.domain;
 public class FileUploadMessage {
 
     private final String fileName;
-    private final Double fileSizeInMegaBytes;
+    private final Double fileSize;
 
-    public FileUploadMessage(String fileName, Double fileSizeInMegaBytes) {
+    public FileUploadMessage(String fileName, Double fileSize) {
         this.fileName = fileName;
-        this.fileSizeInMegaBytes = fileSizeInMegaBytes;
+        this.fileSize = fileSize;
     }
 
     public String getFileName() {
         return fileName;
     }
 
-    public Double getFileSizeInMegaBytes() {
-        return fileSizeInMegaBytes;
+    public Double getFileSize() {
+        return fileSize;
     }
 }
